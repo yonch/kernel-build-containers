@@ -10,6 +10,8 @@ RUN set -ex; \
     apt-get install -y -q sudo aptitude flex bison cpio libncurses5-dev make git exuberant-ctags sparse bc libssl-dev libelf-dev bsdmainutils dwarves xz-utils zstd gawk; \
     apt-get install -y -q python3 python3-venv; \
     apt-get install -y -q python-is-python3 || apt-get install -y -q python; \
+    apt-get install -y -q npm; \
+    npm install -g @anthropic-ai/claude-code; \
     if [ "$GCC_VERSION" ]; then \
       apt-get install -y -q gcc-${GCC_VERSION} g++-${GCC_VERSION} gcc-${GCC_VERSION}-plugin-dev \
         gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu \
