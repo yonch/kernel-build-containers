@@ -1,0 +1,83 @@
+name: Build and Push Container
+
+on:
+  workflow_dispatch:
+    inputs:
+      clang_version:
+        description: 'Clang version (e.g., 17)'
+        required: true
+        default: '17'
+        type: string
+      gcc_version:
+        description: 'GCC version (e.g., 14)'
+        required: true
+        default: '14'
+        type: string
+      ubuntu_version:
+        description: 'Ubuntu version (e.g., 24.04)'
+        required: true
+        default: '24.04'
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  # Constants from your local machine
+  UNAME: yonch
+  UID: 501
+  GNAME: staff
+  GID: 20
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ github.repository }}
+        tags: |
+          type=raw,value=clang-${{ inputs.clang_version }}
+          type=raw,value=gcc-${{ inputs.gcc_version }}
+          type=raw,value=latest
+    
+    - name: Build and push container image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        build-args: |
+          CLANG_VERSION=${{ inputs.clang_version }}
+          GCC_VERSION=${{ inputs.gcc_version }}
+          UBUNTU_VERSION=${{ inputs.ubuntu_version }}
+          UNAME=${{ env.UNAME }}
+          GNAME=${{ env.GNAME }}
+          UID=${{ env.UID }}
+          GID=${{ env.GID }}
+    
+    - name: Show built image info
+      run: |
+        echo "Built and pushed container image:"
+        echo "- ${{ env.REGISTRY }}/${{ github.repository }}:clang-${{ inputs.clang_version }}"
+        echo "- ${{ env.REGISTRY }}/${{ github.repository }}:gcc-${{ inputs.gcc_version }}"
+        echo "- ${{ env.REGISTRY }}/${{ github.repository }}:latest"
+        echo ""
+        echo "To use this image:"
+        echo "docker pull ${{ env.REGISTRY }}/${{ github.repository }}:clang-${{ inputs.clang_version }}"
