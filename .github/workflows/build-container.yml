@@ -24,8 +24,8 @@ env:
   # Constants from your local machine
   UNAME: yonch
   UID: 501
-  GNAME: staff
-  GID: 20
+  GNAME: yonch
+  GID: 501
 
 jobs:
   build-and-push:
