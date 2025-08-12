@@ -58,8 +58,8 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ github.repository }}
         tags: |
-          type=raw,value=clang-${{ inputs.clang_version }}
-          type=raw,value=gcc-${{ inputs.gcc_version }}
+          type=raw,value=clang-${{ inputs.clang_version || '17' }}
+          type=raw,value=gcc-${{ inputs.gcc_version || '14' }}
           type=raw,value=latest
     
     - name: Build and push container image
@@ -81,9 +81,9 @@ jobs:
     - name: Show built image info
       run: |
         echo "Built and pushed container image:"
-        echo "- ${{ env.REGISTRY }}/${{ github.repository }}:clang-${{ inputs.clang_version }}"
-        echo "- ${{ env.REGISTRY }}/${{ github.repository }}:gcc-${{ inputs.gcc_version }}"
+        echo "- ${{ env.REGISTRY }}/${{ github.repository }}:clang-${{ inputs.clang_version || '17' }}"
+        echo "- ${{ env.REGISTRY }}/${{ github.repository }}:gcc-${{ inputs.gcc_version || '14' }}"
         echo "- ${{ env.REGISTRY }}/${{ github.repository }}:latest"
         echo ""
         echo "To use this image:"
-        echo "docker pull ${{ env.REGISTRY }}/${{ github.repository }}:clang-${{ inputs.clang_version }}"
+        echo "docker pull ${{ env.REGISTRY }}/${{ github.repository }}:clang-${{ inputs.clang_version || '17' }}"
