@@ -70,9 +70,9 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         build-args: |
-          CLANG_VERSION=${{ inputs.clang_version }}
-          GCC_VERSION=${{ inputs.gcc_version }}
-          UBUNTU_VERSION=${{ inputs.ubuntu_version }}
+          CLANG_VERSION=${{ inputs.clang_version || '17' }}
+          GCC_VERSION=${{ inputs.gcc_version || '14' }}
+          UBUNTU_VERSION=${{ inputs.ubuntu_version || '24.04' }}
           UNAME=${{ env.UNAME }}
           GNAME=${{ env.GNAME }}
           UID=${{ env.UID }}
