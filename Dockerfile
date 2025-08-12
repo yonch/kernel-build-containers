@@ -7,7 +7,7 @@ RUN set -ex; \
     echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections; \
     apt-get update; \
     apt-get install -y -q apt-utils dialog; \
-    apt-get install -y -q sudo aptitude flex bison cpio libncurses5-dev make git exuberant-ctags sparse bc libssl-dev libelf-dev bsdmainutils dwarves xz-utils zstd gawk locales silversearcher-ag; \
+    apt-get install -y -q sudo aptitude flex bison cpio libncurses5-dev make git exuberant-ctags sparse bc libssl-dev libelf-dev bsdmainutils dwarves xz-utils zstd gawk locales silversearcher-ag ccache curl unzip; \
     apt-get install -y -q python3 python3-venv; \
     apt-get install -y -q python-is-python3 || apt-get install -y -q python; \
     apt-get install -y -q npm; \
@@ -45,6 +45,19 @@ RUN set -ex; \
       update-alternatives --install /usr/bin/lld lld /usr/bin/lld-${CLANG_VERSION} 100; \
     fi
 
+RUN set -ex; \
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"; \
+    unzip awscliv2.zip; \
+    ./aws/install; \
+    rm -rf aws awscliv2.zip
+
+RUN set -ex; \
+    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg; \
+    chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg; \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null; \
+    apt-get update; \
+    apt-get install -y -q gh
+
 ARG UNAME
 ARG UID
 ARG GNAME
@@ -64,6 +77,13 @@ RUN set -x; \
 
 USER ${UNAME}:${GNAME}
 WORKDIR /src
+
+RUN set -ex; \
+    mkdir -p /workspace/.ccache /workspace/.aws /workspace/.config/gh; \
+    ln -sf /workspace/.ccache /home/${UNAME}/.ccache; \
+    ln -sf /workspace/.aws /home/${UNAME}/.aws; \
+    mkdir -p /home/${UNAME}/.config; \
+    ln -sf /workspace/.config/gh /home/${UNAME}/.config/gh
 
 RUN set -ex; \
     id | grep "uid=${UID}(${UNAME}) gid=${GID}(${GNAME})"; \
