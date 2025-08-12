@@ -81,6 +81,7 @@ WORKDIR /src
 RUN set -ex; \
     ln -sf /workspace/.ccache /home/${UNAME}/.ccache; \
     ln -sf /workspace/.aws /home/${UNAME}/.aws; \
+    ln -sf /workspace/.claude /home/${UNAME}/.claude; \
     mkdir -p /home/${UNAME}/.config; \
     ln -sf /workspace/.config/gh /home/${UNAME}/.config/gh
 

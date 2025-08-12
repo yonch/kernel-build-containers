@@ -28,6 +28,14 @@ else
     echo "/workspace/.config/gh already exists, skipping"
 fi
 
+# Create .claude directory if it doesn't exist
+if [ ! -d "/workspace/.claude" ]; then
+    echo "Creating /workspace/.claude"
+    mkdir -p /workspace/.claude
+else
+    echo "/workspace/.claude already exists, skipping"
+fi
+
 echo "Workspace preparation complete!"
 echo ""
 echo "You can now run the container with:"
