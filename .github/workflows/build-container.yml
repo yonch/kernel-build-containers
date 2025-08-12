@@ -20,7 +20,7 @@ on:
         type: string
   push:
     branches:
-      - main
+      - master
     paths:
       - 'Dockerfile'
       - '.github/workflows/build-container.yml'
