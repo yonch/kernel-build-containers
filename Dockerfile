@@ -79,7 +79,6 @@ USER ${UNAME}:${GNAME}
 WORKDIR /src
 
 RUN set -ex; \
-    mkdir -p /workspace/.ccache /workspace/.aws /workspace/.config/gh; \
     ln -sf /workspace/.ccache /home/${UNAME}/.ccache; \
     ln -sf /workspace/.aws /home/${UNAME}/.aws; \
     mkdir -p /home/${UNAME}/.config; \
