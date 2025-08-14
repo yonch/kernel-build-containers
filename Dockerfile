@@ -7,7 +7,7 @@ RUN set -ex; \
     echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections; \
     apt-get update; \
     apt-get install -y -q apt-utils dialog; \
-    apt-get install -y -q sudo aptitude flex bison cpio libncurses5-dev make git exuberant-ctags sparse bc libssl-dev libelf-dev bsdmainutils dwarves xz-utils zstd gawk locales silversearcher-ag ccache curl unzip initramfs-tools; \
+    apt-get install -y -q sudo aptitude flex bison cpio libncurses5-dev make git exuberant-ctags sparse bc libssl-dev libelf-dev bsdmainutils dwarves xz-utils zstd gawk locales silversearcher-ag ccache curl unzip initramfs-tools openssh-server mosh; \
     apt-get install -y -q python3 python3-venv; \
     apt-get install -y -q python-is-python3 || apt-get install -y -q python; \
     apt-get install -y -q npm; \
@@ -75,6 +75,12 @@ RUN set -x; \
     chown -R ${UNAME}:${GNAME} /out; \
     echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
+RUN set -ex; \
+    mkdir -p /var/run/sshd; \
+    mkdir -p /home/${UNAME}/.ssh; \
+    chown ${UNAME}:${GNAME} /home/${UNAME}/.ssh; \
+    chmod 700 /home/${UNAME}/.ssh
+
 USER ${UNAME}:${GNAME}
 WORKDIR /src
 
@@ -94,4 +100,8 @@ RUN set -ex; \
     touch /out/test; \
     rm /out/test
 
-CMD ["bash"]
+COPY sshd_config /etc/ssh/sshd_config
+
+EXPOSE 22
+
+CMD ["/bin/bash", "-c", "sudo /usr/sbin/sshd && exec bash"]
