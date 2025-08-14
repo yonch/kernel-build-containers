@@ -8,6 +8,8 @@ RUN set -ex; \
     apt-get update; \
     apt-get install -y -q apt-utils dialog; \
     apt-get install -y -q sudo aptitude flex bison cpio libncurses5-dev make git exuberant-ctags sparse bc libssl-dev libelf-dev bsdmainutils dwarves xz-utils zstd gawk locales silversearcher-ag ccache curl unzip initramfs-tools openssh-server mosh; \
+    locale-gen en_US.UTF-8; \
+    update-locale LANG=en_US.UTF-8; \
     apt-get install -y -q python3 python3-venv; \
     apt-get install -y -q python-is-python3 || apt-get install -y -q python; \
     apt-get install -y -q npm; \
