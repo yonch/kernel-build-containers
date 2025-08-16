@@ -1,20 +1,33 @@
 ARG UBUNTU_VERSION
 FROM ubuntu:${UBUNTU_VERSION} AS base
 
-ARG GCC_VERSION
-ARG CLANG_VERSION
+# Install base system packages and tools
 RUN set -ex; \
     echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections; \
     apt-get update; \
     apt-get install -y -q apt-utils dialog; \
     apt-get install -y -q sudo aptitude flex bison cpio libncurses5-dev make git exuberant-ctags sparse bc libssl-dev libelf-dev bsdmainutils dwarves xz-utils zstd gawk locales silversearcher-ag ccache curl unzip initramfs-tools openssh-server mosh tmux jq; \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Configure locale
+RUN set -ex; \
     locale-gen en_US.UTF-8; \
-    update-locale LANG=en_US.UTF-8; \
+    update-locale LANG=en_US.UTF-8
+
+# Install Python and npm
+RUN set -ex; \
+    apt-get update; \
     apt-get install -y -q python3 python3-venv; \
     apt-get install -y -q python-is-python3 || apt-get install -y -q python; \
     apt-get install -y -q npm; \
     npm install -g @anthropic-ai/claude-code; \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install GCC toolchain
+ARG GCC_VERSION
+RUN set -ex; \
     if [ "$GCC_VERSION" ]; then \
+      apt-get update; \
       apt-get install -y -q gcc-${GCC_VERSION} g++-${GCC_VERSION} gcc-${GCC_VERSION}-plugin-dev \
         gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu \
         gcc-${GCC_VERSION}-arm-linux-gnueabi g++-${GCC_VERSION}-arm-linux-gnueabi; \
@@ -34,8 +47,14 @@ RUN set -ex; \
         update-alternatives --install /usr/bin/riscv64-linux-gnu-gcc riscv64-linux-gnu-gcc /usr/bin/riscv64-linux-gnu-gcc-${GCC_VERSION} 100; \
         update-alternatives --install /usr/bin/riscv64-linux-gnu-g++ riscv64-linux-gnu-g++ /usr/bin/riscv64-linux-gnu-g++-${GCC_VERSION} 100; \
       fi; \
-    fi; \
+      apt-get clean && rm -rf /var/lib/apt/lists/*; \
+    fi
+
+# Install Clang toolchain  
+ARG CLANG_VERSION
+RUN set -ex; \
     if [ "$CLANG_VERSION" ]; then \
+      apt-get update; \
       if [ "$CLANG_VERSION" = "5" ] || [ "$CLANG_VERSION" = "6" ]; then \
         CLANG_VERSION="${CLANG_VERSION}.0"; \
         apt-get install -y -q clang-${CLANG_VERSION} lld-${CLANG_VERSION} clang-tools-6.0; \
@@ -45,6 +64,7 @@ RUN set -ex; \
       update-alternatives --install /usr/bin/clang clang /usr/bin/clang-${CLANG_VERSION} 100; \
       update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${CLANG_VERSION} 100; \
       update-alternatives --install /usr/bin/lld lld /usr/bin/lld-${CLANG_VERSION} 100; \
+      apt-get clean && rm -rf /var/lib/apt/lists/*; \
     fi
 
 RUN set -ex; \
@@ -58,7 +78,8 @@ RUN set -ex; \
     chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg; \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null; \
     apt-get update; \
-    apt-get install -y -q gh
+    apt-get install -y -q gh; \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ARG UNAME
 ARG UID
