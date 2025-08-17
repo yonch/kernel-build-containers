@@ -81,6 +81,12 @@ RUN set -ex; \
     apt-get install -y -q gh; \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Install Debian kernel build tooling
+RUN set -ex; \
+    apt-get update; \
+    apt-get install -y -q debhelper build-essential fakeroot; \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
 ARG UNAME
 ARG UID
 ARG GNAME
