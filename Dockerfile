@@ -84,7 +84,7 @@ RUN set -ex; \
 # Install Debian kernel build tooling
 RUN set -ex; \
     apt-get update; \
-    apt-get install -y -q debhelper build-essential fakeroot libdw-dev:native rsync; \
+    apt-get install -y -q debhelper build-essential fakeroot libdw-dev:native rsync dracut; \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ARG UNAME
