@@ -6,7 +6,7 @@ RUN set -ex; \
     echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections; \
     apt-get update; \
     apt-get install -y -q apt-utils dialog; \
-    apt-get install -y -q sudo aptitude flex bison cpio libncurses5-dev make git exuberant-ctags sparse bc libssl-dev libelf-dev bsdmainutils dwarves xz-utils zstd gawk locales silversearcher-ag ccache curl unzip initramfs-tools openssh-server mosh tmux jq; \
+    apt-get install -y -q sudo aptitude flex bison cpio libncurses5-dev make git exuberant-ctags sparse bc libssl-dev libelf-dev bsdmainutils dwarves xz-utils zstd gawk locales silversearcher-ag ccache curl unzip initramfs-tools openssh-server mosh tmux jq nano; \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Configure locale
