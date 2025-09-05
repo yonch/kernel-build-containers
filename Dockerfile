@@ -14,13 +14,11 @@ RUN set -ex; \
     locale-gen en_US.UTF-8; \
     update-locale LANG=en_US.UTF-8
 
-# Install Python and npm
+# Install Python
 RUN set -ex; \
     apt-get update; \
     apt-get install -y -q python3 python3-venv; \
     apt-get install -y -q python-is-python3 || apt-get install -y -q python; \
-    apt-get install -y -q npm; \
-    npm install -g @anthropic-ai/claude-code; \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install GCC toolchain
